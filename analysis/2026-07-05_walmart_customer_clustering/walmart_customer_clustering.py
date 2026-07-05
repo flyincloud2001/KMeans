@@ -239,6 +239,12 @@ plt.savefig('walmart_kmeans_clusters.png', dpi=150)
 plt.show()
 
 # 各群在三個 RFM 維度上的比較（用標準化後的數值比較，才能放在同一張圖上）
+# 注意：這裡先前版本有一個圖例錯位的錯誤
+# 原因是先畫長條圖，又畫了代表0的灰色參考線，最後才呼叫legend幫三根長條命名
+# 灰色參考線會意外被legend收錄進去，把三個長條的文字標籤全部往後推移一格
+# 導致圖例文字和實際長條顏色對不上，且最後一根長條完全沒有圖例文字
+# 修正方式：畫長條圖時先關閉自動圖例，再明確指定只用ax.containers（三根長條的物件）
+# 建立圖例，確保灰色參考線不會被誤收錄進圖例中
 cluster_scaled_summary = pd.DataFrame(
     X_scaled, columns=cluster_cols
 )
@@ -246,12 +252,13 @@ cluster_scaled_summary['cluster'] = customer_data['cluster']
 cluster_scaled_mean = cluster_scaled_summary.groupby('cluster').mean()
 
 fig, ax = plt.subplots(figsize=(9, 5))
-cluster_scaled_mean.plot(kind='bar', ax=ax)
+cluster_scaled_mean.plot(kind='bar', ax=ax, legend=False)  # 先關閉自動圖例
+ax.axhline(0, color='gray', linewidth=0.8)
 ax.set_title('各群在 RFM 三維度上的標準化平均值比較（RobustScaler）')
 ax.set_xlabel('群別')
 ax.set_ylabel('標準化後的平均值')
-ax.axhline(0, color='gray', linewidth=0.8)
-ax.legend(['平均訂單金額', '訂單數', 'Recency天數'])
+# 明確指定 handles 只用 ax.containers（三根長條），避免灰色參考線混入圖例
+ax.legend(ax.containers, ['平均訂單金額', '訂單數', 'Recency天數'])
 plt.tight_layout()
 plt.savefig('walmart_cluster_rfm_comparison.png', dpi=150)
 plt.show()
