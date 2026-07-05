@@ -39,7 +39,7 @@ else:
 plt.rcParams['axes.unicode_minus'] = False
 
 # ── 參數設定 ──────────────────────────────────────────────────────────────
-FILE_PATH = 'walmart Retail Data.xlsx'  # 請改成你實際存放的檔案路徑
+FILE_PATH = r'C:\Users\flyin\OneDrive\桌面\新代碼\KMeans\data\walmart Retail Data.xlsx'  # 請改成你實際存放的檔案路徑
 RANDOM_STATE = 42  # 固定亂數種子，確保每次執行結果一致
 
 # ══════════════════════════════════════════════════════════════════════════
