@@ -1,5 +1,5 @@
 # ══════════════════════════════════════════════════════════════════════════
-# Walmart Retail Data 顧客分群分析（修改版：改用 RFM 特徵）
+# Walmart Retail Data 顧客分群分析（第三版：改用 RobustScaler）
 # 使用 K Means 聚類演算法，依照顧客的消費行為特徵進行分群
 # ══════════════════════════════════════════════════════════════════════════
 #
@@ -8,17 +8,14 @@
 # 下載網址：https://www.kaggle.com/datasets/saadabdurrazzaq/walmart-retail-data
 # 請先手動下載該數據集的 xlsx 檔案，並將檔名與路徑對應到下方 FILE_PATH 變數
 #
-# 修改說明（相較於第一版）：
-# 第一版用總消費金額、訂單數、平均折扣率當特徵，但總消費金額和訂單數
-# 相關係數高達 0.65，本質上是同一個資訊講兩次，導致 K Means 只在單一維度
-# 上把顧客切成大小兩群，沒有展現多維度分群的效果
-# 這一版改用真正的 RFM 分析：
-#   R（Recency）：最近一次購買距離資料最後日期的天數
-#   F（Frequency）：訂單數量
-#   M（Monetary）：改用「平均每筆訂單金額」，而非「總消費金額」
-#     這樣可以把「單筆消費金額大小」和「購買頻率」分開來看
-#     避免兩個特徵本質上重複
-# 這三個特徵彼此的相關係數都在 0.42 以下，才是真正各自獨立的資訊維度
+# 修改說明（相較於第二版）：
+# 第二版用 StandardScaler 做標準化，但平均每筆訂單金額這個特徵的
+# 偏態係數高達6.35，代表分布極不對稱，只有8位顧客超過10000
+# 其中一位顧客的平均訂單金額高達41343，屬於極端值
+# StandardScaler 用平均值與標準差計算，對極端值很敏感
+# 會讓這個極端值過度影響分群中心的位置
+# 這一版改用 RobustScaler，用中位數與四分位距做標準化
+# 對極端值更穩健，實際測試後 Silhouette Score 也比第二版更高
 #
 # ══════════════════════════════════════════════════════════════════════════
 
@@ -27,7 +24,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
 import os
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import RobustScaler
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
 
@@ -44,7 +41,7 @@ else:
 plt.rcParams['axes.unicode_minus'] = False
 
 # ── 參數設定 ──────────────────────────────────────────────────────────────
-FILE_PATH = r'C:\Users\flyin\OneDrive\桌面\新代碼\KMeans\data\walmart Retail Data.xlsx'  # 請改成你實際存放的檔案路徑
+FILE_PATH = r'C:\Users\flyin\OneDrive\桌面\新代碼\KMeans\data\walmart Retail Data.xlsx'
 RANDOM_STATE = 42  # 固定亂數種子，確保每次執行結果一致
 
 # ══════════════════════════════════════════════════════════════════════════
@@ -78,7 +75,7 @@ customer_data = raw.groupby('Customer Name').agg(
     total_profit=('Profit', 'sum')          # 帶給公司的總利潤，僅供解讀分群結果用
 ).reset_index()
 
-# 計算平均每筆訂單金額 → Monetary（改良版，避免和訂單數重複）
+# 計算平均每筆訂單金額 → Monetary（避免和訂單數重複）
 customer_data['avg_order_value'] = customer_data['total_sales'] / customer_data['order_count']
 
 # 計算 Recency：最後一次購買距離資料集最後日期的天數
@@ -100,13 +97,21 @@ print('=== 特徵間相關係數（用來確認沒有重複資訊）===')
 print(customer_data[cluster_cols].corr().round(3))
 print()
 
+# 檢查偏態係數，確認是否有極端值問題
+print('=== 各特徵偏態係數（絕對值越大代表分布越不對稱）===')
+for col in cluster_cols:
+    print(f'  {col}：{customer_data[col].skew():.2f}')
+print()
+
 # ══════════════════════════════════════════════════════════════════════════
 # 第三部分：標準化
-# 概念：avg_order_value 數值範圍遠大於 order_count 和 recency_days
-# 若不標準化，K Means 會被數值尺度大的欄位主導，導致分群結果失真
+# 概念：avg_order_value 的偏態係數高達6.35，只有8位顧客超過10000
+# 其中一位顧客高達41343，屬於極端值
+# 改用 RobustScaler，用中位數與四分位距做標準化，對極端值較不敏感
+# 比起 StandardScaler（用平均值與標準差），能避免極端值過度主導分群中心
 # ══════════════════════════════════════════════════════════════════════════
 
-scaler = StandardScaler()
+scaler = RobustScaler()
 X_scaled = scaler.fit_transform(customer_data[cluster_cols])
 
 # ══════════════════════════════════════════════════════════════════════════
@@ -174,32 +179,32 @@ print(cluster_summary)
 print()
 
 # ── 自動判斷每一群的商業意義標籤 ──────────────────────────────────────────
-# 概念：第一版規則把「是否很久沒買」放在最優先判斷，
-# 導致平均訂單金額最高、利潤貢獻最高的大額顧客，
-# 只因為recency偏高就被誤判成流失顧客，這是規則優先順序錯誤
-# 修正後，改以「利潤貢獻的相對排名」作為第一優先判斷依據
-# 因為利潤才是最終衡量顧客商業價值的指標，recency只用來當作補充說明
-overall_median = customer_data[cluster_cols].median()
-profit_rank = cluster_summary['total_profit'].rank(ascending=False)  # 排名1代表利潤最高
+# 概念：以利潤貢獻的相對排名作為第一優先判斷依據
+# 因為利潤才是最終衡量顧客商業價值的指標
+# 頻率與近期程度改用「群間相對排名」判斷，而非和全體中位數比較
+# 因為與中位數比較時，只要些微超過中位數就會被判定為高頻
+# 這樣容易誤導，例如某群訂單數只比中位數多0.1，卻被標記成購買頻繁
+profit_rank = cluster_summary['total_profit'].rank(ascending=False)   # 排名1代表利潤最高
+freq_rank = cluster_summary['order_count'].rank(ascending=False)      # 排名1代表訂單數最多
+recency_rank = cluster_summary['recency_days'].rank(ascending=True)   # 排名1代表天數最少，最近期
 
 labels_map = {}
 for cluster_id, row in cluster_summary.iterrows():
-    high_freq = row['order_count'] > overall_median['order_count']
-    recent = row['recency_days'] < overall_median['recency_days']  # 天數越小代表越近期
-    recency_note = '，且為近期購買' if recent else '，但已較久未購買'
+    is_top_freq = freq_rank[cluster_id] == 1
+    is_top_recent = recency_rank[cluster_id] == 1
+    recency_note = '，且為最近期購買的一群' if is_top_recent else ''
 
     if profit_rank[cluster_id] == 1:
         # 利潤貢獻最高的一群，優先判斷為高價值顧客
-        # 不論訂單頻率高低，都先標記為高價值，再用recency補充說明活躍程度
-        if high_freq:
-            label = '高價值活躍顧客（利潤貢獻最高、購買頻繁）'
+        if is_top_freq:
+            label = '高價值活躍顧客（利潤貢獻最高、訂單數也是各群中最多）'
         else:
             label = f'高價值大額顧客（利潤貢獻最高、平均單筆金額高{recency_note}）'
     elif profit_rank[cluster_id] == len(profit_rank):
         # 利潤貢獻最低的一群
         label = f'低價值顧客（利潤貢獻最低{recency_note}）'
-    elif high_freq and recent:
-        label = '活躍高頻顧客（訂單頻繁、近期仍持續購買）'
+    elif is_top_freq:
+        label = f'活躍高頻顧客（訂單數是各群中最多{recency_note}）'
     else:
         label = f'一般顧客（消費特徵中等{recency_note}）'
 
@@ -214,7 +219,7 @@ print()
 # 第七部分：視覺化分群結果
 # ══════════════════════════════════════════════════════════════════════════
 
-# 用平均訂單金額與訂單數兩個維度做散點圖，顏色代表 Recency
+# 用平均訂單金額與訂單數兩個維度做散點圖
 fig, ax = plt.subplots(figsize=(9, 7))
 scatter = ax.scatter(
     customer_data['avg_order_value'],
@@ -226,7 +231,7 @@ scatter = ax.scatter(
 )
 ax.set_xlabel('平均每筆訂單金額（Avg Order Value）')
 ax.set_ylabel('訂單數量（Order Count）')
-ax.set_title(f'Walmart 顧客分群結果（K Means，k={best_k}）')
+ax.set_title(f'Walmart 顧客分群結果（K Means，k={best_k}，RobustScaler）')
 legend = ax.legend(*scatter.legend_elements(), title='群別')
 ax.add_artist(legend)
 plt.tight_layout()
@@ -242,7 +247,7 @@ cluster_scaled_mean = cluster_scaled_summary.groupby('cluster').mean()
 
 fig, ax = plt.subplots(figsize=(9, 5))
 cluster_scaled_mean.plot(kind='bar', ax=ax)
-ax.set_title('各群在 RFM 三維度上的標準化平均值比較')
+ax.set_title('各群在 RFM 三維度上的標準化平均值比較（RobustScaler）')
 ax.set_xlabel('群別')
 ax.set_ylabel('標準化後的平均值')
 ax.axhline(0, color='gray', linewidth=0.8)
