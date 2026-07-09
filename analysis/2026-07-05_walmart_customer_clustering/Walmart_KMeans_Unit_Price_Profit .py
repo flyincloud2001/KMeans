@@ -108,7 +108,7 @@ for i in range(2, 4):
     plot_clusters(data, FEATURES, labels, i)
 
 
-
+print(data)
 
 
 
