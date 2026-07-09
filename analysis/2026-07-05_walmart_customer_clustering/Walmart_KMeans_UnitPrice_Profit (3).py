@@ -83,6 +83,15 @@ def silhouette_score_line_plot(scaled_data):
         score = silhouette_score(scaled_data, labels)
         clusters.append(n)
         silhouette_scores.append(score)
+
+    fig, ax = plt.subplots(figsize=(12, 5))
+    ax.plot(clusters, silhouette_scores, label='silhouette score')
+    ax.set_xlabel("k values")
+    ax.set_ylabel("silhouette score")
+    ax.set_title("k values versus inertia")
+    #ax.axvline(3, color='r', alpha=0.5, linestyle='--', label='Elbow Point')
+    plt.tight_layout()
+    plt.show()
     
     return silhouette_scores
 
