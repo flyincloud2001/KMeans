@@ -66,8 +66,8 @@ def inertia_calculation(data, model, n):
 inertias = []
 clusters = []
 for n in range(1, MAX_CLUSTERS+1):
-    
-    inertia = model.
+    model_temp = fit_kmeans(scaled, n)
+    inertia = model_temp.inertia
     clustesr.append(n)
     inertia.append(inertia_calculation(data, model, n))
 
