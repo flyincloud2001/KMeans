@@ -68,13 +68,19 @@ def inertias_line_plot(data):
     ax.axvline(3, color='r', alpha=0.5, linestyle='--', label='Elbow Point')
     plt.tight_layout()
     plt.show()
+    
+    return inertias
 
 
 data = load_data(FILE_PATH, FEATURES)
 scaled = scale_features(data, FEATURES)
 model, labels = fit_kmeans(scaled, N_CLUSTERS)
 plot_clusters(data, FEATURES, labels)
-inertias_line_plot(scaled)
+inertias = inertias_line_plot(scaled)
+
+
+
+
 
 
 
