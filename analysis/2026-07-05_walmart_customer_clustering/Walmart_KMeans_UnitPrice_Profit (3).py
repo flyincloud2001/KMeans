@@ -53,38 +53,6 @@ def plot_clusters(data, features, labels):
     plt.show()
 
 
-# ── K-Means 疊代過程追蹤 ──────────────────────────────────────────────────────
-def run_kmeans_iterations(scaled_data, n_clusters, max_iter, random_state=0):
-    # 先用 KMeans++ 找出初始中心點，讓起點與正式模型一致
-    init_model = KMeans(n_clusters=n_clusters, n_init=1, max_iter=1,
-                         random_state=random_state)
-    init_model.fit(scaled_data)
-    centroids = init_model.cluster_centers_
-
-    history = []
-    for iteration in range(1, max_iter + 1):
-        # 將每個點指派給距離最近的中心點
-        distances = np.linalg.norm(
-            scaled_data[:, None, :] - centroids[None, :, :], axis=2)
-        labels = distances.argmin(axis=1)
-
-        # 計算該次疊代的分群品質
-        score = silhouette_score(scaled_data, labels)
-        history.append({'iteration': iteration, 'labels': labels,
-                         'centroids': centroids, 'score': score})
-
-        # 依照目前分群結果重新計算中心點
-        new_centroids = np.array([
-            scaled_data[labels == k].mean(axis=0) for k in range(n_clusters)
-        ])
-
-        # 中心點不再變化即代表收斂，提前結束疊代
-        if np.allclose(new_centroids, centroids):
-            break
-        centroids = new_centroids
-
-    return history
-
 
 # ── 挑選代表性疊代 ────────────────────────────────────────────────────────────
 def select_representative_iterations(history, n_select):
