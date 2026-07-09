@@ -109,11 +109,8 @@ data = load_data(FILE_PATH, FEATURES)
 scaled = scale_features(data, FEATURES)
 inertias = inertias_line_plot(scaled)
 silhouette_scores = silhouette_score_line_plot(scaled)
-
-for i in range(2, 4):
-    model, labels = fit_kmeans(scaled, i)
-    plot_clusters(data, FEATURES, labels, i)
-
+model, labels = fit_kmeans(scaled, 3)
+plot_clusters(data, FEATURES, labels, 3)
 interpretation(labels, data)
 
 print(data)
