@@ -120,6 +120,8 @@ def bar_plot(data):
     plt.tight_layout()
     plt.show()
 
+    print()
+
 data = load_data(FILE_PATH, FEATURES)
 scaled = scale_features(data, FEATURES)
 inertias = inertias_line_plot(scaled)
