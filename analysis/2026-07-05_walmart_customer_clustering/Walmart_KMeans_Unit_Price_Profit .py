@@ -97,6 +97,7 @@ def silhouette_score_line_plot(scaled_data):
     
     return silhouette_scores
 
+def interpretation(labels, )
 
 data = load_data(FILE_PATH, FEATURES)
 scaled = scale_features(data, FEATURES)
