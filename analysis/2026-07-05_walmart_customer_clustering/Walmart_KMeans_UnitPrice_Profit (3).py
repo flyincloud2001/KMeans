@@ -66,7 +66,7 @@ def inertias_line_plot(data):
     ax.plot(clusters, inertias, label='inertias')
     ax.set_xlabel("k values")
     ax.set_ylabel("inertia")
-    ax.set_title("k values versus inertia")
+    ax.set_title("k values versus inertias")
     ax.axvline(3, color='r', alpha=0.5, linestyle='--', label='Elbow Point')
     plt.tight_layout()
     plt.show()
@@ -88,7 +88,7 @@ def silhouette_score_line_plot(scaled_data):
     ax.plot(clusters, silhouette_scores, label='silhouette score')
     ax.set_xlabel("k values")
     ax.set_ylabel("silhouette score")
-    ax.set_title("silhouette score versus inertia")
+    ax.set_title("k values versus silhouette scores")
     #ax.axvline(3, color='r', alpha=0.5, linestyle='--', label='Elbow Point')
     plt.tight_layout()
     plt.show()
@@ -96,15 +96,12 @@ def silhouette_score_line_plot(scaled_data):
     return silhouette_scores
 
 
-
-
-
 data = load_data(FILE_PATH, FEATURES)
 scaled = scale_features(data, FEATURES)
 model, labels = fit_kmeans(scaled, N_CLUSTERS)
 plot_clusters(data, FEATURES, labels)
 inertias = inertias_line_plot(scaled)
-silhouette_score_line_plot(scaled)
+silhouette_scores = silhouette_score_line_plot(scaled)
 
 
 
