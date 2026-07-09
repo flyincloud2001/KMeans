@@ -127,7 +127,8 @@ def bar_plot(data):
     plt.show()
 
     print('===== Total Profit for Each Cluster =====')
-    print()
+    total_profit = profit_means * cluster_size
+    print(total_profit)
 
 data = load_data(FILE_PATH, FEATURES)
 scaled = scale_features(data, FEATURES)
