@@ -78,7 +78,7 @@ def silhouette_score_line_plot(scaled_data):
     silhouette_scores = []
     clusters = []
     
-    for n in range(1, MAX_CLUSTERS+1):
+    for n in range(2, MAX_CLUSTERS+1):
         model_temp, labels= fit_kmeans(scaled_data, n)
         score = silhouette_score(scaled_data, labels)
         clusters.append(n)
@@ -88,7 +88,7 @@ def silhouette_score_line_plot(scaled_data):
     ax.plot(clusters, silhouette_scores, label='silhouette score')
     ax.set_xlabel("k values")
     ax.set_ylabel("silhouette score")
-    ax.set_title("k values versus inertia")
+    ax.set_title("silhouette score versus inertia")
     #ax.axvline(3, color='r', alpha=0.5, linestyle='--', label='Elbow Point')
     plt.tight_layout()
     plt.show()
