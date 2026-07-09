@@ -40,15 +40,15 @@ def fit_kmeans(scaled_data, n_clusters):
 
 
 # ── 視覺化 ────────────────────────────────────────────────────────────────────
-def plot_clusters(data, features, labels):
+def plot_clusters(data, features, labels, n):
     fig, ax = plt.subplots(figsize=(8, 6))
     ax.scatter(data[features[0]], data[features[1]],
             c=labels, cmap='viridis', alpha=0.5, s=8)
-    ax.set_title('Walmart K-Means 分群結果')
+    ax.set_title(f'Walmart K-Means 分群結果 _for_k={n}')
     ax.set_xlabel(features[0])
     ax.set_ylabel(features[1])
     plt.tight_layout()
-    plt.savefig('walmart_kmeans_clusters.png', dpi=150)
+    plt.savefig(f'walmart_kmeans_clusters_for_k={n}.png', dpi=150)
     plt.show()
 
 def inertias_line_plot(data):
@@ -105,7 +105,7 @@ silhouette_scores = silhouette_score_line_plot(scaled)
 
 for i in range(2, 4):
     model, labels = fit_kmeans(scaled, i)
-    plot_clusters(data, FEATURES, labels)
+    plot_clusters(data, FEATURES, labels, i)
 
 
 
