@@ -10,7 +10,7 @@ from sklearn.metrics import silhouette_score
 FILE_PATH   = r'C:\Users\flyin\OneDrive\桌面\新代碼\KMeans\data\walmart Retail Data.xlsx'
 FEATURES    = ['Unit Price', 'Profit']
 N_CLUSTERS  = 3
-MAX_ITER    = 10  # 疊代過程最多執行次數，若提前收斂會自動停止
+MAX_CLUSTERS  = 10  # 疊代過程最多執行次數，若提前收斂會自動停止
 
 
 # ── 資料讀取與前處理 ──────────────────────────────────────────────────────────
@@ -59,5 +59,16 @@ plot_clusters(data, FEATURES, labels)
 
 # ------- 用來算出inertia的function ----------------
 def inertia_calculation(data, model, n):
-    centroids = model.cen
-    np.norm(data[FEATURES] - 
+    centroids = model.centroids()
+    inertia = np.norm(data[FEATURES] - centroids(n)
+    return inertia
+
+inertias = []
+clusters = []
+for n in range(1, MAX_CLUSTERS+1):
+    clustesr.append(n)
+    inertia.append(inertia_calculation(data, model, n))
+
+fig, ax = plt.subplots(figsize=(12, 5))
+ax.plot(clusters, inertias, lable='inertias')
+plt.show()
