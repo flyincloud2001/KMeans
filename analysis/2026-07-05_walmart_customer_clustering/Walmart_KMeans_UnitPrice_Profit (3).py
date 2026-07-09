@@ -71,9 +71,9 @@ def inertias_line_plot(data):
     
     return inertias
 
-def silhouette_score_line_plot(data, labels):
-    score = silhouette_score(data, labels)
-    
+def silhouette_score_line_plot(scaled_data, labels):
+    score = silhouette_score(scaled_data, labels)
+
 
 
 
