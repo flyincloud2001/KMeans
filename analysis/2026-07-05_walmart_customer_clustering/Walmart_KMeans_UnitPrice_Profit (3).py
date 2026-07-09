@@ -55,3 +55,7 @@ data = load_data(FILE_PATH, FEATURES)
 scaled = scale_features(data, FEATURES)
 model, labels = fit_kmeans(scaled, N_CLUSTERS)
 plot_clusters(data, FEATURES, labels)
+
+
+# ------- 用來算出inertia的function ----------------
+def inertia_calculation(data, )
