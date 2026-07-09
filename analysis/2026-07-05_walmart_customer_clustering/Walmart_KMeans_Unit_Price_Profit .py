@@ -114,7 +114,7 @@ def bar_plot(data):
 
     fig, ax = plt.subplots(figsize=(8, 5))
     data.groupby('cluster').size().plot(kind='bar', ax=ax)
-    ax.set_title('')
+    ax.set_title('data size for each cluster')
     ax.set_xlabel('cluster')
     ax.set_ylabel('Profit')
     plt.tight_layout()
