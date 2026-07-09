@@ -105,7 +105,9 @@ def interpretation(labels, data):
 def bar_plot(data):
 
     fig, ax = plt.subplots(figsize=(8, 5))
+    ax.bar()
     data.groupby('cluster')[FEATURES].mean()['Profit'].plot(kind='bar', ax=ax)
+    ax.axhline(0, color='black', linewidth=0.8, linestyle='--')
     ax.set_title('average profit for each cluster')
     ax.set_xlabel('cluster')
     ax.set_ylabel('Profit')
