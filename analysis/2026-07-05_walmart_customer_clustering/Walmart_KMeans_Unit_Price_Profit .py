@@ -104,7 +104,6 @@ def interpretation(labels, data):
 
 
 
-
 data = load_data(FILE_PATH, FEATURES)
 scaled = scale_features(data, FEATURES)
 inertias = inertias_line_plot(scaled)
