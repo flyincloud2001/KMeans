@@ -43,7 +43,7 @@ def fit_kmeans(scaled_data, n_clusters):
 def plot_clusters(data, features, labels):
     fig, ax = plt.subplots(figsize=(8, 6))
     ax.scatter(data[features[0]], data[features[1]],
-               c=labels, cmap='viridis', alpha=0.5, s=8)
+            c=labels, cmap='viridis', alpha=0.5, s=8)
     ax.set_title('Walmart K-Means 分群結果')
     ax.set_xlabel(features[0])
     ax.set_ylabel(features[1])
