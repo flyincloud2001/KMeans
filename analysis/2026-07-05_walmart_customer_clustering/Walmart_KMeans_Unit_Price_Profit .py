@@ -113,8 +113,7 @@ model, labels = fit_kmeans(scaled, 3)
 plot_clusters(data, FEATURES, labels, 3)
 interpretation(labels, data)
 
-print(data)
-print(labels)
+
 
 
 
