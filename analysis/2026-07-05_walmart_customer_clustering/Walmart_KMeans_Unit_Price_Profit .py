@@ -107,7 +107,7 @@ def bar_plot(data):
     fig, ax = plt.subplots(figsize=(8, 5))
     cluster_means = data.groupby('cluster')[FEATURES].mean()
     profit_means = cluster_means['Profit']
-    ax.bar(profit_means, color='steelblue')
+    ax.bar(cluster_means.index, profit_means, color='steelblue')
     ax.axhline(0, color='black', linewidth=0.8, linestyle='--')
     ax.set_title('average profit for each cluster')
     ax.set_xlabel('cluster')
