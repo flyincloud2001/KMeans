@@ -57,19 +57,14 @@ model, labels = fit_kmeans(scaled, N_CLUSTERS)
 plot_clusters(data, FEATURES, labels)
 
 
-# ------- 用來算出inertia的function ----------------
-def inertia_calculation(data, model, n):
-    centroids = model.centroids()
-    inertia = np.norm(data[FEATURES] - centroids(n)
-    return inertia
 
 inertias = []
 clusters = []
 for n in range(1, MAX_CLUSTERS+1):
-    model_temp = fit_kmeans(scaled, n)
-    inertia = model_temp.inertia
-    clustesr.append(n)
-    inertia.append(inertia_calculation(data, model, n))
+    model_temp, labels= fit_kmeans(scaled, n)
+    inertia = model_temp.inertia_()
+    clusters.append(n)
+    inertias.append(inertia)
 
 fig, ax = plt.subplots(figsize=(12, 5))
 ax.plot(clusters, inertias, lable='inertias')
