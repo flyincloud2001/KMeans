@@ -102,10 +102,18 @@ def interpretation(labels, data):
     clusters = data.groupby('cluster')[FEATURES].mean()
     print(clusters)
 
-def bar_plot():
-    
+def bar_plot(data):
+
     fig, ax = plt.subplots(figsize=(8, 5))
     data.groupby('cluster')[FEATURES].mean()['Profit'].plot(kind='bar', ax=ax)
+    ax.set_title('各群平均獲利')
+    ax.set_xlabel('cluster')
+    ax.set_ylabel('Profit')
+    plt.tight_layout()
+    plt.show()
+
+    fig, ax = plt.subplots(figsize=(8, 5))
+    data.groupby('cluster')[FEATURES].size()['Profit'].plot(kind='bar', ax=ax)
     ax.set_title('各群平均獲利')
     ax.set_xlabel('cluster')
     ax.set_ylabel('Profit')
@@ -119,7 +127,7 @@ silhouette_scores = silhouette_score_line_plot(scaled)
 model, labels = fit_kmeans(scaled, 3)
 plot_clusters(data, FEATURES, labels, 3)
 interpretation(labels, data)
-bar_plot()
+bar_plot(data)
 
 
 
