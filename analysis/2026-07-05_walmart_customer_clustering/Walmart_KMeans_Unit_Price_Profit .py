@@ -126,6 +126,7 @@ def bar_plot(data):
     plt.savefig("data_size_for_each_cluster.png", dpi=150)
     plt.show()
 
+    print('===== Total Profit for Each Cluster =====')
     print()
 
 data = load_data(FILE_PATH, FEATURES)
