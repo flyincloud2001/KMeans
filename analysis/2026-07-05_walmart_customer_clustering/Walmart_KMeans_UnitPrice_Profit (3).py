@@ -59,4 +59,5 @@ plot_clusters(data, FEATURES, labels)
 
 # ------- 用來算出inertia的function ----------------
 def inertia_calculation(data, model, n):
-    centroids = data[FEATURES] - 
+    centroids = model.centroid
+    np.norm(data[FEATURES] - 
