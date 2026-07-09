@@ -1,4 +1,4 @@
-# ── 套件匯入 ──────────────────────────────────────────────────────────────────
+# ── Import Modules ──────────────────────────────────────────────────────────────────
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -6,14 +6,14 @@ from sklearn.cluster import KMeans
 from sklearn.preprocessing import RobustScaler
 from sklearn.metrics import silhouette_score
 
-# ── 參數設定 ──────────────────────────────────────────────────────────────────
+# ── Parameters Setup ──────────────────────────────────────────────────────────────────
 FILE_PATH   = r'C:\Users\flyin\OneDrive\桌面\新代碼\KMeans\data\walmart Retail Data.xlsx'
 FEATURES    = ['Unit Price', 'Profit']
 N_CLUSTERS  = 3
 MAX_CLUSTERS  = 10  # 疊代過程最多執行次數，若提前收斂會自動停止
 
 
-# ── 資料讀取與前處理 ──────────────────────────────────────────────────────────
+# ── Read Data and Preprocess Data ──────────────────────────────────────────────────────────
 def load_data(path, features):
     # 讀取原始 Excel 檔案
     raw = pd.read_excel(path)
@@ -24,7 +24,7 @@ def load_data(path, features):
     return data
 
 
-# ── 標準化 ────────────────────────────────────────────────────────────────────
+# ── Standardize the Data ────────────────────────────────────────────────────────────────────
 def scale_features(data, features):
     # 零售數據常有極端值，RobustScaler 以中位數與四分位距縮放，較不受極端值影響
     scaler = RobustScaler()
@@ -32,14 +32,14 @@ def scale_features(data, features):
     return scaled
 
 
-# ── K-Means 建模 ──────────────────────────────────────────────────────────────
+# ── K-Means Model ──────────────────────────────────────────────────────────────
 def fit_kmeans(scaled_data, n_clusters):
     model = KMeans(n_clusters=n_clusters, random_state=0, n_init=10)
     labels = model.fit_predict(scaled_data)
     return model, labels
 
 
-# ── 視覺化 ────────────────────────────────────────────────────────────────────
+# ── Visualizations ────────────────────────────────────────────────────────────────────
 def plot_clusters(data, features, labels, n):
     fig, ax = plt.subplots(figsize=(8, 6))
     ax.scatter(data[features[0]], data[features[1]],
