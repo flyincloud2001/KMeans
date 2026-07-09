@@ -97,7 +97,20 @@ def silhouette_score_line_plot(scaled_data):
     
     return silhouette_scores
 
-def interpretation(labels, )
+def interpretation(labels, data):
+    data['cluster'] = labels
+    data.groupby('cluster')[FEATURES].mean()
+    
+    fig, ax = plt.subplots(figsize=(12, 5))
+    ax.plot(clusters, silhouette_scores, label='silhouette score')
+    ax.set_xlabel("k values")
+    ax.set_ylabel("silhouette score")
+    ax.set_title("k values versus silhouette scores")
+    ax.axvline(3, color='r', alpha=0.5, linestyle='--', label='Elbow Point')
+    plt.tight_layout()
+    plt.savefig("k_values_versus_silhouette_scores.png", dpi=150)
+    plt.show()
+
 
 data = load_data(FILE_PATH, FEATURES)
 scaled = scale_features(data, FEATURES)
@@ -110,6 +123,7 @@ for i in range(2, 4):
 
 
 print(data)
+print(labels)
 
 
 
