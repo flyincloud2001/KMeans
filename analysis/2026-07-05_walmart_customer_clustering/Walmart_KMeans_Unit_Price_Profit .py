@@ -125,6 +125,9 @@ def bar_plot(data):
     plt.tight_layout()
     plt.savefig("data_size_for_each_cluster.png", dpi=150)
     plt.show()
+    
+    print(cluster_means)
+    print(cluster_size)
 
     print('===== Total Profit for Each Cluster =====')
     total_profit = profit_means * cluster_size
