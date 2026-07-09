@@ -62,10 +62,14 @@ inertias = []
 clusters = []
 for n in range(1, MAX_CLUSTERS+1):
     model_temp, labels= fit_kmeans(scaled, n)
-    inertia = model_temp.inertia_()
+    inertia = model_temp.inertia_
     clusters.append(n)
     inertias.append(inertia)
 
 fig, ax = plt.subplots(figsize=(12, 5))
-ax.plot(clusters, inertias, lable='inertias')
+ax.plot(clusters, inertias, label='inertias')
+ax.set_xlabel("k values")
+ax.set_ylabel("inertia")
+ax.set_title("k values versus inertia")
+plt.tight_layout()
 plt.show()
