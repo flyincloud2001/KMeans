@@ -89,7 +89,7 @@ def silhouette_score_line_plot(scaled_data):
     ax.set_xlabel("k values")
     ax.set_ylabel("silhouette score")
     ax.set_title("k values versus silhouette scores")
-    #ax.axvline(3, color='r', alpha=0.5, linestyle='--', label='Elbow Point')
+    ax.axvline(3, color='r', alpha=0.5, linestyle='--', label='Elbow Point')
     plt.tight_layout()
     plt.show()
     
