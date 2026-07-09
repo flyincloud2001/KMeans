@@ -52,8 +52,10 @@ def plot_clusters(data, features, labels):
     plt.show()
 
 def inertias_line_plot(data):
+
     inertias = []
     clusters = []
+
     for n in range(1, MAX_CLUSTERS+1):
         model_temp, labels= fit_kmeans(scaled, n)
         inertia = model_temp.inertia_
@@ -71,8 +73,19 @@ def inertias_line_plot(data):
     
     return inertias
 
-def silhouette_score_line_plot(scaled_data, labels):
-    score = silhouette_score(scaled_data, labels)
+def silhouette_score_line_plot(scaled_data):
+
+    silhouette_scores = []
+    clusters = []
+    
+    for n in range(1, MAX_CLUSTERS+1):
+        model_temp, labels= fit_kmeans(scaled_data, n)
+        score = silhouette_score(scaled_data, labels)
+        clusters.append(n)
+        silhouette_scores.append(score)
+    
+    return silhouette_scores
+
 
 
 
@@ -82,7 +95,7 @@ scaled = scale_features(data, FEATURES)
 model, labels = fit_kmeans(scaled, N_CLUSTERS)
 plot_clusters(data, FEATURES, labels)
 inertias = inertias_line_plot(scaled)
-silhouette_score_line_plot(scaled, labels)
+silhouette_score_line_plot(scaled)
 
 
 
