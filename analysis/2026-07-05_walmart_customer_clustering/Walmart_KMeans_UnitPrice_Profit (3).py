@@ -69,6 +69,7 @@ def inertias_line_plot(data):
     ax.set_title("k values versus inertias")
     ax.axvline(3, color='r', alpha=0.5, linestyle='--', label='Elbow Point')
     plt.tight_layout()
+    plt.savefig("k_values_versus_inertias.png", dpi=150)
     plt.show()
     
     return inertias
@@ -91,6 +92,7 @@ def silhouette_score_line_plot(scaled_data):
     ax.set_title("k values versus silhouette scores")
     ax.axvline(3, color='r', alpha=0.5, linestyle='--', label='Elbow Point')
     plt.tight_layout()
+    plt.savefig("k_values_versus_silhouette_scores.png", dpi=150)
     plt.show()
     
     return silhouette_scores
