@@ -11,7 +11,6 @@ FILE_PATH   = r'C:\Users\flyin\OneDrive\桌面\新代碼\KMeans\data\walmart Ret
 FEATURES    = ['Unit Price', 'Profit']
 N_CLUSTERS  = 3
 MAX_ITER    = 10  # 疊代過程最多執行次數，若提前收斂會自動停止
-N_SELECT    = 3   # 從所有疊代中挑選展示的張數
 
 
 # ── 資料讀取與前處理 ──────────────────────────────────────────────────────────
@@ -52,4 +51,7 @@ def plot_clusters(data, features, labels):
     plt.savefig('walmart_kmeans_clusters.png', dpi=150)
     plt.show()
 
-data = load_data(FILE_PATH, )
+data = load_data(FILE_PATH, FEATURES)
+scaled = scale_features(data, FEATURES)
+model, labels = fit_kmeans(scaled, N_CLUSTERS)
+plot_clusters(data, FEATURES, labels)
