@@ -66,6 +66,8 @@ def inertia_calculation(data, model, n):
 inertias = []
 clusters = []
 for n in range(1, MAX_CLUSTERS+1):
+    
+    inertia = model.
     clustesr.append(n)
     inertia.append(inertia_calculation(data, model, n))
 
