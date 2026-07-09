@@ -51,7 +51,7 @@ def plot_clusters(data, features, labels):
     plt.savefig('walmart_kmeans_clusters.png', dpi=150)
     plt.show()
 
-def inertias_line_plot():
+def inertias_line_plot(data):
     inertias = []
     clusters = []
     for n in range(1, MAX_CLUSTERS+1):
@@ -69,12 +69,12 @@ def inertias_line_plot():
     plt.tight_layout()
     plt.show()
 
-    
+
 data = load_data(FILE_PATH, FEATURES)
 scaled = scale_features(data, FEATURES)
 model, labels = fit_kmeans(scaled, N_CLUSTERS)
 plot_clusters(data, FEATURES, labels)
-inertias_line_plot()
+inertias_line_plot(scaled)
 
 
 
