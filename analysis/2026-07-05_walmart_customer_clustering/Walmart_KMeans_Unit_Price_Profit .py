@@ -113,6 +113,7 @@ def bar_plot(data):
     ax.set_xlabel('cluster')
     ax.set_ylabel('Profit')
     plt.tight_layout()
+    plt.savefig("average_profit_for_each_cluster.png", dpi=150)
     plt.show()
 
     fig, ax = plt.subplots(figsize=(8, 5))
@@ -120,8 +121,9 @@ def bar_plot(data):
     ax.plot(cluster_size, color='steelblue')
     ax.set_title('data size for each cluster')
     ax.set_xlabel('cluster')
-    ax.set_ylabel('Profit')
+    ax.set_ylabel('size')
     plt.tight_layout()
+    plt.savefig("data_size_for_each_cluster.png", dpi=150)
     plt.show()
 
     print()
