@@ -113,7 +113,7 @@ def bar_plot(data):
     plt.show()
 
     fig, ax = plt.subplots(figsize=(8, 5))
-    data.groupby('cluster')[FEATURES].size()['Profit'].plot(kind='bar', ax=ax)
+    data.groupby('cluster').size()['Profit'].plot(kind='bar', ax=ax)
     ax.set_title('各群平均獲利')
     ax.set_xlabel('cluster')
     ax.set_ylabel('Profit')
