@@ -51,26 +51,30 @@ def plot_clusters(data, features, labels):
     plt.savefig('walmart_kmeans_clusters.png', dpi=150)
     plt.show()
 
+def inertias_line_plot():
+    inertias = []
+    clusters = []
+    for n in range(1, MAX_CLUSTERS+1):
+        model_temp, labels= fit_kmeans(scaled, n)
+        inertia = model_temp.inertia_
+        clusters.append(n)
+        inertias.append(inertia)
+
+    fig, ax = plt.subplots(figsize=(12, 5))
+    ax.plot(clusters, inertias, label='inertias')
+    ax.set_xlabel("k values")
+    ax.set_ylabel("inertia")
+    ax.set_title("k values versus inertia")
+    ax.axvline(3, color='r', alpha=0.5, linestyle='--', label='Elbow Point')
+    plt.tight_layout()
+    plt.show()
+
+    
 data = load_data(FILE_PATH, FEATURES)
 scaled = scale_features(data, FEATURES)
 model, labels = fit_kmeans(scaled, N_CLUSTERS)
 plot_clusters(data, FEATURES, labels)
+inertias_line_plot()
 
 
 
-inertias = []
-clusters = []
-for n in range(1, MAX_CLUSTERS+1):
-    model_temp, labels= fit_kmeans(scaled, n)
-    inertia = model_temp.inertia_
-    clusters.append(n)
-    inertias.append(inertia)
-
-fig, ax = plt.subplots(figsize=(12, 5))
-ax.plot(clusters, inertias, label='inertias')
-ax.set_xlabel("k values")
-ax.set_ylabel("inertia")
-ax.set_title("k values versus inertia")
-ax.axvline(3, color='r', alpha=0.5, linestyle='--', label='Elbow Point')
-plt.tight_layout()
-plt.show()
