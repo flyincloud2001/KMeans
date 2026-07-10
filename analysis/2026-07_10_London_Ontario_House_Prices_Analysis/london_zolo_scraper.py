@@ -152,9 +152,12 @@ def parse_listing_cards(html: str):
             }
         )
 
-    # 頁面下方若還有下一頁，會出現 aria-label="next page of results" 的連結，
-    # 沒有這個連結就代表目前已經是最後一頁。
-    has_next_page = gallery.select_one('a[aria-label="next page of results"]') is not None
+    # 頁面下方若還有下一頁，會出現 aria-label="next page of results" 的連結。
+    # 注意：這個分頁連結在實際解析後的 DOM 樹中並不屬於
+    # <section id="gallery"> 的子孫節點（雖然在原始 HTML 文字中看起來緊接在
+    # gallery 內容之後），因此必須在整個頁面（soup）範圍內尋找，而不是只在
+    # gallery 範圍內找，否則會誤判為「已無下一頁」而提早停止翻頁。
+    has_next_page = soup.select_one('a[aria-label="next page of results"]') is not None
 
     return records, has_next_page
 
