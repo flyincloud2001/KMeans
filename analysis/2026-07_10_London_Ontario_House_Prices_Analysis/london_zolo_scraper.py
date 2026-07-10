@@ -117,9 +117,13 @@ def parse_listing_cards(html: str):
         neighbourhood_tag = card.select_one("span.neighbourhood")
         link_tag = card.select_one("a.tile-overlay-link")
 
-        # 街道地址與價格是判斷「這是一筆正常房屋資料」的最低要求，
-        # 若缺少其中之一，很可能是廣告卡片或其他非房屋區塊，直接跳過。
-        if street_tag is None or price_tag is None:
+        # 街道地址、價格、房型是判斷「這是一筆正常房屋資料」的最低要求。
+        # 實測發現 Zolo 有時會在同一頁的清單格線中，針對「已經出現過的同一筆
+        # 物件」再插入一張精簡版卡片（網址路徑略有不同、且沒有綠色房型/
+        # For Sale 標籤），內容其實是同一間房屋的重複資料，只是缺少
+        # div.fill-green 的房型標籤。因此這裡把 type_tag 缺失也視為不完整
+        # 卡片一併跳過，避免同一間房屋被重複計入。
+        if street_tag is None or price_tag is None or type_tag is None:
             continue
 
         street = street_tag.get_text(strip=True)
@@ -138,7 +142,7 @@ def parse_listing_cards(html: str):
         price_value = price_tag.get("value")
         price = int(price_value) if price_value and price_value.isdigit() else None
 
-        property_type = type_tag.get_text(strip=True) if type_tag else None
+        property_type = type_tag.get_text(strip=True)
         listing_url = link_tag.get("href") if link_tag else None
 
         records.append(
@@ -230,6 +234,18 @@ def main():
     # 依照房屋詳細頁網址去除重複資料，避免補抓或分頁過程中重複收錄同一筆房屋。
     if "listing_url" in df.columns:
         df = df.drop_duplicates(subset="listing_url").reset_index(drop=True)
+
+    # 保險機制：Zolo 有時會用「不同的網址路徑」重複顯示同一間房屋
+    # （例如同一筆物件同時出現在 /london-real-estate/... 與
+    # /london-east-real-estate/... 這類不同子分區前綴的網址下），
+    # 單純用 listing_url 去重無法抓到這種情況。這裡改用「門牌號碼（去除
+    # 樓層/單位前綴）＋ 價格」作為第二層去重依據，避免同一間房屋在最終
+    # 資料集中被重複計入，影響後續分群結果。
+    address_number = df["address"].str.split(",").str[0].str.replace(
+        r"^[^-]*-", "", regex=True
+    ).str.strip().str.lower()
+    df = df.loc[~pd.Series(list(zip(address_number, df["price"]))).duplicated().values]
+    df = df.reset_index(drop=True)
 
     # 若總筆數超過上限，隨機抽樣保留 MAX_TOTAL_RECORDS 筆
     # （固定 random_state 以利結果可重現）。
