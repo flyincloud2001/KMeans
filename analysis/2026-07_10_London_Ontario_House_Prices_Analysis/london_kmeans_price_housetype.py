@@ -12,6 +12,9 @@ FILE_PATH = r'C:\Users\flyin\OneDrive\桌面\新代碼\KMeans\data\london_zolo_h
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # 圖表輸出路徑，統一存到本分析資料夾內
 MAX_CLUSTERS = 10  # Elbow / Silhouette 分析時，K 值掃描的上限
 
+plt.rcParams['font.sans-serif'] = ['Microsoft JhengHei']  # 設定中文字型，避免圖表中的繁體中文顯示為缺字方塊
+plt.rcParams['axes.unicode_minus'] = False  # 避免中文字型下負號顯示異常
+
 
 # ── Read Data and Preprocess Data ──────────────────────────────────────────────────────────
 def load_data(path):
